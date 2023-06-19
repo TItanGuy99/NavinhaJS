@@ -15,6 +15,7 @@ let ctrlBG2 = 0;
 let ctrlBG3 = 512;
 let life = 3;
 let score = 0;
+let totalEnemies = 5;
 
 document.addEventListener("DOMContentLoaded", (event) => {
   let canvas = document.getElementById("canvas");
@@ -50,6 +51,27 @@ document.addEventListener("DOMContentLoaded", (event) => {
   };
 });
 
+function reset_variables() {
+  xAxys = 220;
+  yAxys = 420;
+  xCount = 0;
+  yCount = 0;
+  up = false;
+  down = false;
+  left = false;
+  right = false;
+  shoot = false;
+  pause = false;
+  bulletArray = [];
+  enemyArray = [];
+  ctrlBG1 = -512;
+  ctrlBG2 = 0;
+  ctrlBG3 = 512;
+  life = 3;
+  score = 0;
+  totalEnemies = 5;
+}
+
 document.addEventListener("keyup", (event) => {
   switch (event.key) {
     case "ArrowUp":
@@ -77,7 +99,11 @@ document.addEventListener("keyup", (event) => {
       break;
 
     case "Enter":
-      pause = !pause;
+      if(life > 0) {
+        pause = !pause;
+      } else {
+        reset_variables();
+      }
     break;
   }
 });
@@ -211,7 +237,12 @@ function ctrlDrawBulletPlayer(ctx, bullet) {
 
 function ctrlDrawEnemy(ctx, enemy) {
   /* Controla e mostra inimigo */
-  if (enemyArray.length < 4) {
+
+  if(score > totalEnemies * 2) {
+    totalEnemies = score++;
+  }
+
+  if (enemyArray.length < totalEnemies) {
     enemyArray.push([
       randomIntFromInterval(32, 480),
       randomIntFromInterval(-1024, 0),
@@ -294,15 +325,20 @@ function drawScene(canvas, ctx, bg, player1, bullet, enemy) {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ctrlDrawBg(ctx, bg);
-  ctrlDrawPlayer(ctx, player1);
-  ctrlDrawEnemy(ctx, enemy);
-  ctrlDrawBulletPlayer(ctx, bullet);
-
-  ctx.font = "19px Arial";
-  ctx.fillText("Life: " + life, 10, 30);
-  ctx.fillText("Score: " + score, 10, 60);
-
-  if(pause) {
-    ctx.fillText("Paused", 230, 256);
+  if(life > 0) {
+    ctrlDrawPlayer(ctx, player1);
+    ctrlDrawEnemy(ctx, enemy);
+    ctrlDrawBulletPlayer(ctx, bullet);
+  
+    ctx.font = "19px Arial";
+    ctx.fillText("Life: " + life, 10, 30);
+    ctx.fillText("Score: " + score, 10, 60);
+  
+    if(pause) {
+      ctx.fillText("Paused", 230, 256);
+    }
+  } else {
+    ctx.fillText("Game Over", 215, 240);
+    ctx.fillText("Score: " + score, 215, 270);
   }
 }
