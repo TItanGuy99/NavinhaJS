@@ -263,8 +263,8 @@ function ctrlDrawEnemy(ctx, enemy) {
 }
 
 function checkCollision(elementA, elementB) {
-  xIsColliding = false;
-  yIsColliding = false;
+  let xIsColliding = false;
+  let yIsColliding = false;
 
   if (elementA[0] > elementB[0]) {
     if (elementA[0] - elementB[0] < 57) {
