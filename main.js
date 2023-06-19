@@ -12,6 +12,8 @@ let enemyArray = [];
 let ctrlBG1 = -512;
 let ctrlBG2 = 0;
 let ctrlBG3 = 512;
+let life = 3;
+let score = 0;
 
 document.addEventListener("DOMContentLoaded", (event) => {
   let canvas = document.getElementById("canvas");
@@ -244,19 +246,29 @@ function checkCollision(elementA, elementB) {
   }
 }
 
-function randomIntFromInterval(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
 function checkAllCollisions() {
   bulletArray.forEach((element, index, object) => {
     enemyArray.forEach((element2, index2, object2) => {
       if (checkCollision(element, element2)) {
         object.splice(index, 1);
         object2.splice(index2, 1);
+        score++;
       }
     });
   });
+
+  enemyArray.forEach((element, index, object) => {
+    if (checkCollision([xAxys, yAxys], element)) {
+      object.splice(index, 1);
+      life--;
+      xAxys = 220;
+      yAxys = 420;
+    }
+  });
+}
+
+function randomIntFromInterval(min, max) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function drawScene(canvas, ctx, bg, player1, bullet, enemy) {
@@ -270,6 +282,7 @@ function drawScene(canvas, ctx, bg, player1, bullet, enemy) {
   ctrlDrawEnemy(ctx, enemy);
   ctrlDrawBulletPlayer(ctx, bullet);
 
-  ctx.font = "25px Arial";
-  ctx.fillText("Life: 3", 10, 40);
+  ctx.font = "19px Arial";
+  ctx.fillText("Life: " + life, 10, 30);
+  ctx.fillText("Score: " + score, 10, 60);
 }
