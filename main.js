@@ -1,3 +1,4 @@
+/* musics https://www.youtube.com/watch?v=PP_ydA31mZ8&list=RDQMDLoBzDk29ZE&index=38 */
 let xAxys = 220;
 let yAxys = 420;
 let xCount = 0;
@@ -16,6 +17,13 @@ let ctrlBG3 = 512;
 let life = 3;
 let score = 0;
 let totalEnemies = 5;
+let explosion = new Audio('audio/explosion.mp3');
+explosion.volume = 0;
+let shot = new Audio('audio/shot.mp3');
+shot.volume = 0;
+let music = new Audio('audio/music.mp3');
+music.loop = true;
+music.volume = 0;
 
 document.addEventListener("DOMContentLoaded", (event) => {
   let canvas = document.getElementById("canvas");
@@ -32,22 +40,22 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   bg.onload = () => {
     count_load++;
-    loaded(count_load, canvas, ctx, bg, player1, bullet, enemy);
+    loaded(count_load, canvas, ctx, bg, player1, bullet, enemy, music);
   };
 
   player1.onload = () => {
     count_load++;
-    loaded(count_load, canvas, ctx, bg, player1, bullet, enemy);
+    loaded(count_load, canvas, ctx, bg, player1, bullet, enemy, music);
   };
 
   bullet.onload = () => {
     count_load++;
-    loaded(count_load, canvas, ctx, bg, player1, bullet, enemy);
+    loaded(count_load, canvas, ctx, bg, player1, bullet, enemy, music);
   };
 
   enemy.onload = () => {
     count_load++;
-    loaded(count_load, canvas, ctx, bg, player1, bullet, enemy);
+    loaded(count_load, canvas, ctx, bg, player1, bullet, enemy, music);
   };
 });
 
@@ -129,6 +137,9 @@ document.addEventListener("keydown", (event) => {
 
       case " ":
         shoot = true;
+        shot.pause();
+        shot.currentTime = 0;
+        shot.play();
         break;
     }
 
@@ -161,11 +172,12 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-function loaded(count_load, canvas, ctx, bg, player1, bullet, enemy) {
+function loaded(count_load, canvas, ctx, bg, player1, bullet, enemy, music) {
+  music.play();
   if (count_load == 4) {
     window.setInterval(() => {
       drawScene(canvas, ctx, bg, player1, bullet, enemy);
-    }, 4);
+    }, 10);
   }
 }
 
@@ -300,6 +312,9 @@ function checkAllCollisions() {
         object.splice(index, 1);
         object2.splice(index2, 1);
         score++;
+        explosion.pause();
+        explosion.currentTime = 0;
+        explosion.play();        
       }
     });
   });
@@ -310,6 +325,9 @@ function checkAllCollisions() {
       life--;
       xAxys = 220;
       yAxys = 420;
+      explosion.pause();
+      explosion.currentTime = 0;
+      explosion.play();       
     }
   });
 }
