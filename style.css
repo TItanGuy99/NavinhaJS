@@ -1,7 +1,9 @@
 body {
     text-align: center;
-    background-image: url('/images/bgPage.jpg');
+    color: white;
+    background-image: url('images/bgPage.jpg');
     background-repeat: repeat;
+    overflow: hidden;
 }
 
 canvas {

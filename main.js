@@ -221,17 +221,13 @@ function ctrlDrawBg() {
 function ctrlDrawPlayer() {
   if (xAxys < -playerSpecs.frameWidth) {
     xAxys = 512;
-  }
-
-  if (xAxys > 512) {
+  } else if (xAxys > 512) {
     xAxys = -playerSpecs.frameWidth;
   }
 
   if (yAxys > 512) {
-    yAxys = 0;
-  }
-
-  if (yAxys < 0) {
+    yAxys = -playerSpecs.frameHeight;
+  } else if (yAxys < -playerSpecs.frameHeight) {
     yAxys = 512;
   }
 
@@ -417,7 +413,7 @@ function drawScene() {
     ctrlDrawEnemy();
     ctrlDrawBulletPlayer();
 
-    ctx.font = "19px Arial";
+    ctx.font = "19px Roboto";
     ctx.fillText("Life: " + life, 10, 30);
     ctx.fillText("Score: " + score, 10, 60);
 
