@@ -29,12 +29,32 @@ let bg = new Image();
 let player1 = new Image();
 let bullet = new Image();
 let enemy = new Image();
+let enemy2 = new Image();
+let enemy3 = new Image();
+
+// Specs
+let playerSpecs = {
+  frameWidth: 99,
+  frameHeight: 87,
+  row: 0,
+  column: 0
+};
+
+let enemySpecs = {
+  frameWidth: 80,
+  frameHeight: 58,
+  row: 0,
+  column: 0,
+  ctrlAnimation: 0
+};
 
 /* Caminho */
 bg.src = "images/bg.png";
-player1.src = "images/ship.png";
+player1.src = "images/shipAnimated.png";
 bullet.src = "images/bullet.png";
 enemy.src = "images/enemy.png";
+enemy2.src = "images/enemy2.png";
+enemy3.src = "images/enemy3.png";
 
 /* Controla Volume */
 explosion.volume = 0.2;
@@ -47,12 +67,14 @@ bg.onload = checkLoaded();
 player1.onload = checkLoaded();
 bullet.onload = checkLoaded();
 enemy.onload = checkLoaded();
+enemy2.onload = checkLoaded();
+enemy3.onload = checkLoaded();
 
-/* Função para chegar se as imagens foram carregadas */
+/* Função para checar se as imagens foram carregadas */
 function checkLoaded() {
   count_load++;
 
-  if (count_load == 4) {
+  if (count_load == 6) {
     music.play();
     window.requestAnimationFrame(drawScene);
   }
@@ -142,7 +164,7 @@ document.addEventListener("keydown", (event) => {
     }
 
     if (shoot) {
-      bulletArray.push([xAxys + 20, yAxys]);
+      bulletArray.push([xAxys + playerSpecs.frameWidth / 2 - 4, yAxys]);
       shoot = false;
     }
 
@@ -197,12 +219,12 @@ function ctrlDrawBg() {
 
 /* Controla e mostra player */
 function ctrlDrawPlayer() {
-  if (xAxys < 0) {
+  if (xAxys < -playerSpecs.frameWidth) {
     xAxys = 512;
   }
 
   if (xAxys > 512) {
-    xAxys = 0;
+    xAxys = -playerSpecs.frameWidth;
   }
 
   if (yAxys > 512) {
@@ -218,7 +240,19 @@ function ctrlDrawPlayer() {
     yAxys += yCount;
   }
 
-  ctx.drawImage(player1, xAxys, yAxys);
+  playerSpecs.column = playerSpecs.column == 0 ? 1 : 0;
+
+  ctx.drawImage(
+    player1,
+    playerSpecs.column * playerSpecs.frameWidth,
+    playerSpecs.row * playerSpecs.frameHeight,
+    playerSpecs.frameWidth,
+    playerSpecs.frameHeight,
+    xAxys,
+    yAxys,
+    playerSpecs.frameWidth,
+    playerSpecs.frameHeight
+  );
 }
 
 /* Controla e mostra tiros do jogador */
@@ -243,26 +277,65 @@ function ctrlDrawEnemy() {
   }
 
   if (enemyArray.length < totalEnemies) {
-    enemyArray.push([
-      randomIntFromInterval(32, 480),
-      randomIntFromInterval(-1024, 0),
-    ]);
+    enemyArray.push(
+      {
+        x: randomIntFromInterval(32, 480),
+        y: randomIntFromInterval(-1024, 0),
+        type: randomIntFromInterval(0, 2),
+        _with: enemySpecs.frameWidth,
+        _height: enemySpecs.frameHeight,
+        alive: true,
+        hit: false
+      }
+    );
   }
 
+  enemySpecs.ctrlAnimation++;
   enemyArray.forEach((element, index, object) => {
     if (!pause) {
-      element[1] = element[1] + 2;
+      element.y = element.y + 2;
+
+      if(element.hit) {
+        element._with-= 5;
+        element._height-= 5;
+      }
+  
+      if(element._with <= 5 && element._height <=5) {
+        element.alive = false;
+      }
     }
 
-    ctx.drawImage(enemy, element[0], element[1]);
+    enemySpecs.column = enemySpecs.ctrlAnimation < 5 ? 1 : 0;
+    enemySpecs.ctrlAnimation = enemySpecs.ctrlAnimation >= 10 ? 0 : enemySpecs.ctrlAnimation;
+    let sprite;
 
-    if (element[1] > 512) {
+    if(element.type == 0) {
+      sprite = enemy;
+    } else if(element.type == 1) {
+      sprite = enemy2;
+    } else {
+      sprite = enemy3;
+    }
+
+    ctx.drawImage(
+      sprite,
+      enemySpecs.column * enemySpecs.frameWidth,
+      enemySpecs.row * enemySpecs.frameHeight,
+      enemySpecs.frameWidth,
+      enemySpecs.frameHeight,
+      element.x,
+      element.y,
+      element._with,
+      element._height
+    );
+
+    if (element.y > 512) {
       object.splice(index, 1);
     }
   });
 }
 
- /* Checa colisão entre dois sprites */
+/* Checa colisão entre dois sprites */
 function checkCollision(elementA, elementB) {
   let xIsColliding = false;
   let yIsColliding = false;
@@ -294,11 +367,15 @@ function checkCollision(elementA, elementB) {
   }
 }
 
- /* Função que vai checar todas as colisões */
+/* Função que vai checar todas as colisões */
 function checkAllCollisions() {
-  bulletArray.forEach((element, index, object) => {
-    enemyArray.forEach((element2, index2, object2) => {
-      if (checkCollision(element, element2)) {
+  bulletArray.forEach((bullet, index, object) => {
+    enemyArray.forEach((enemy, index2, object2) => {
+      if (checkCollision(bullet, [enemy.x, enemy.y])) {
+        enemy.hit = true;
+      }
+
+      if(!enemy.alive) {
         object.splice(index, 1);
         object2.splice(index2, 1);
         score++;
@@ -309,8 +386,8 @@ function checkAllCollisions() {
     });
   });
 
-  enemyArray.forEach((element, index, object) => {
-    if (checkCollision([xAxys, yAxys], element)) {
+  enemyArray.forEach((enemy, index, object) => {
+    if (checkCollision([xAxys, yAxys], [enemy.x, enemy.y])) {
       object.splice(index, 1);
       life--;
       xAxys = 220;
@@ -322,12 +399,12 @@ function checkAllCollisions() {
   });
 }
 
- /* Função que vai retornar um número aleatório entre dois números. */
+/* Função que vai retornar um número aleatório entre dois números. */
 function randomIntFromInterval(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
- /* Função principal do game */
+/* Função principal do game */
 function drawScene() {
   checkAllCollisions();
   ctx.clearRect(0, 0, 640, canvas.height);
