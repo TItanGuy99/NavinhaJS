@@ -1,4 +1,7 @@
-/* musics https://www.youtube.com/watch?v=PP_ydA31mZ8&list=RDQMDLoBzDk29ZE&index=38 */
+/* 
+Code created by Luiz Nai: https://www.youtube.com/@NaiAdventure
+Music: https://www.youtube.com/watch?v=PP_ydA31mZ8&list=RDQMDLoBzDk29ZE&index=38 
+*/
 document.addEventListener("DOMContentLoaded", (event) => {
   /* Variáveis */
   let canvas = document.getElementById("canvas");
@@ -37,7 +40,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     frameWidth: 99,
     frameHeight: 87,
     row: 0,
-    column: 0
+    column: 0,
   };
 
   let enemySpecs = {
@@ -45,7 +48,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
     frameHeight: 58,
     row: 0,
     column: 0,
-    ctrlAnimation: 0
+    ctrlAnimation: 0,
   };
 
   /* Caminho */
@@ -273,17 +276,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
 
     if (enemyArray.length < totalEnemies) {
-      enemyArray.push(
-        {
-          x: randomIntFromInterval(32, 480),
-          y: randomIntFromInterval(-1024, 0),
-          type: randomIntFromInterval(0, 2),
-          _with: enemySpecs.frameWidth,
-          _height: enemySpecs.frameHeight,
-          alive: true,
-          hit: false
-        }
-      );
+      enemyArray.push({
+        x: randomIntFromInterval(32, 480),
+        y: randomIntFromInterval(-1024, 0),
+        type: randomIntFromInterval(0, 2),
+        _with: enemySpecs.frameWidth,
+        _height: enemySpecs.frameHeight,
+        alive: true,
+        hit: false,
+      });
     }
 
     enemySpecs.ctrlAnimation++;
@@ -291,23 +292,24 @@ document.addEventListener("DOMContentLoaded", (event) => {
       if (!pause) {
         element.y = element.y + 2;
 
-        if(element.hit) {
-          element._with-= 5;
-          element._height-= 5;
+        if (element.hit) {
+          element._with -= 5;
+          element._height -= 5;
         }
-    
-        if(element._with <= 5 && element._height <=5) {
+
+        if (element._with <= 5 && element._height <= 5) {
           element.alive = false;
         }
       }
 
       enemySpecs.column = enemySpecs.ctrlAnimation < 5 ? 1 : 0;
-      enemySpecs.ctrlAnimation = enemySpecs.ctrlAnimation >= 10 ? 0 : enemySpecs.ctrlAnimation;
+      enemySpecs.ctrlAnimation =
+        enemySpecs.ctrlAnimation >= 10 ? 0 : enemySpecs.ctrlAnimation;
       let sprite;
 
-      if(element.type == 0) {
+      if (element.type == 0) {
         sprite = enemy;
-      } else if(element.type == 1) {
+      } else if (element.type == 1) {
         sprite = enemy2;
       } else {
         sprite = enemy3;
@@ -371,7 +373,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
           enemy.hit = true;
         }
 
-        if(!enemy.alive) {
+        if (!enemy.alive) {
           object.splice(index, 1);
           object2.splice(index2, 1);
           score++;
