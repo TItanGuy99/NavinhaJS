@@ -4,11 +4,17 @@ Music: https://www.youtube.com/watch?v=PP_ydA31mZ8&list=RDQMDLoBzDk29ZE&index=38
 */
 document.addEventListener("DOMContentLoaded", (event) => {
   /* Variáveis */
-  let canvas = document.getElementById("canvas");
-  let ctx = canvas.getContext("2d");
-  let explosion = new Audio("audio/explosion.mp3");
-  let shot = new Audio("audio/shot.mp3");
-  let music = new Audio("audio/music.mp3");
+  const canvas = document.getElementById("canvas");
+  const ctx = canvas.getContext("2d");
+  const explosion = new Audio("audio/explosion.mp3");
+  const shot = new Audio("audio/shot.mp3");
+  const music = new Audio("audio/music.mp3");
+  const bg = new Image();
+  const player1 = new Image();
+  const bullet = new Image();
+  const enemy = new Image();
+  const enemy2 = new Image();
+  const enemy3 = new Image();
   let xAxys = 220;
   let yAxys = 420;
   let xCount = 0;
@@ -28,12 +34,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
   let score = 0;
   let totalEnemies = 5;
   let count_load = 0;
-  let bg = new Image();
-  let player1 = new Image();
-  let bullet = new Image();
-  let enemy = new Image();
-  let enemy2 = new Image();
-  let enemy3 = new Image();
 
   // Specs
   let playerSpecs = {
